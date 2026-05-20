@@ -5,6 +5,8 @@ const cors = require("cors");
 const path = require("path");
 const open = require("open");
 
+const chatRoutes = require("./routes/chatRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 const authRoutes = require("./routes/authRoutes");
 const doctorRoutes = require("./routes/doctorRoutes");
 const queueRoutes = require("./routes/queueRoutes");
@@ -34,3 +36,7 @@ app.listen(PORT, async () => {
     );
 
 });
+
+app.use("/api/chats", chatRoutes);
+
+app.use("/api/notifications", notificationRoutes);

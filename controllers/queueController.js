@@ -2,6 +2,8 @@ const db = require("../config/db");
 
 const Queue = require("../models/queueModel");
 
+const Notification = require("../models/notificationModel");
+
 const createAppointment = (req, res) => {
 
     const {
@@ -82,6 +84,36 @@ const getAllQueues = (req, res) => {
 };
 
 const updateQueueStatus = (req, res) => {
+
+    const getUserSql = `
+        SELECT user_id
+        FROM queues
+        WHERE id = ?
+    `;
+
+    db.query(
+        getUserSql,
+        [req.params.id],
+
+        (err, result) => {
+
+            const userId =
+                result[0].user_id;
+
+            if (status === "consulting") {
+
+                Notification.createNotification(
+                    [
+                        userId,
+                        "Consultation Started",
+                        "Your consultation has started"
+                    ],
+
+                    () => {}
+                );
+            }
+        }
+    );
 
     const { status } = req.body;
 

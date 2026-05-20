@@ -127,3 +127,96 @@ function logout() {
 
 loadDoctors();
 loadMyAppointments();
+
+async function sendMessage() {
+
+    const message =
+        document.getElementById(
+            "chatInput"
+        ).value;
+
+    await fetch("/api/chats", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type":
+                "application/json",
+
+            Authorization:
+                `Bearer ${token}`
+        },
+
+        body: JSON.stringify({
+
+            receiver_id: 1,
+
+            message
+        })
+    });
+
+    loadMessages();
+}
+
+async function loadMessages() {
+
+    const response =
+        await fetch(
+            "/api/chats/1",
+            {
+                headers: {
+                    Authorization:
+                        `Bearer ${token}`
+                }
+            }
+        );
+
+    const messages =
+        await response.json();
+
+    const container =
+        document.getElementById(
+            "messages"
+        );
+
+    container.innerHTML = "";
+
+    messages.forEach((msg) => {
+
+        container.innerHTML += `
+            <p>
+                <b>
+                    ${msg.sender_name}
+                </b>:
+                ${msg.message}
+            </p>
+        `;
+    });
+}
+
+async function loadNotifications() {
+
+    const response =
+        await fetch(
+            "/api/notifications",
+            {
+                headers: {
+                    Authorization:
+                        `Bearer ${token}`
+                }
+            }
+        );
+
+    const notifications =
+        await response.json();
+
+    console.log(notifications);
+}
+
+setInterval(() => {
+
+    loadNotifications();
+
+    loadMessages();
+
+}, 5000);
