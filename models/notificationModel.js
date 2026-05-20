@@ -33,7 +33,24 @@ const getNotifications = (
     db.query(sql, [userId], callback);
 };
 
+const markAsRead = (
+    notificationId,
+    userId,
+    callback
+) => {
+
+    const sql = `
+        UPDATE notifications
+        SET is_read = 1
+        WHERE id = ?
+        AND user_id = ?
+    `;
+
+    db.query(sql, [notificationId, userId], callback);
+};
+
 module.exports = {
     createNotification,
-    getNotifications
+    getNotifications,
+    markAsRead
 };

@@ -123,6 +123,7 @@ function logout() {
 
 loadQueues();
 loadChatUsers();
+loadNotifications();
 
 async function loadChatUsers() {
 
@@ -179,18 +180,10 @@ async function loadChatUsers() {
     });
 }
 
-if (user.unread_count > 0) {
-
-    style = "font-weight:bold";
-
-} else {
-
-    style = "";
-}
-
 setInterval(() => {
 
     loadChatUsers();
+    loadNotifications();
 
 }, 3000);
 
@@ -299,6 +292,86 @@ async function loadAdminMessages(
 
     container.scrollTop =
         container.scrollHeight;
+}
+
+async function loadNotifications() {
+
+    const notifications =
+        await fetchNotifications();
+
+    const container =
+        document.getElementById(
+            "notifications"
+        );
+
+    container.innerHTML = "";
+
+    if (!notifications.length) {
+
+        container.innerHTML =
+            "<p>No notifications</p>";
+
+        return;
+    }
+
+    notifications.forEach((notif) => {
+
+        const payload =
+            getNotificationPayload(notif);
+
+        const text =
+            payload.text || notif.message;
+
+        const chatUserId =
+            payload.chatUserId || 0;
+
+        const unreadStyle =
+            notif.is_read == 0
+                ? "font-weight:bold;"
+                : "";
+
+        container.innerHTML += `
+            <div
+                class="card"
+                style="cursor:pointer; ${unreadStyle}"
+                onclick="openNotification(
+                    ${notif.id},
+                    ${chatUserId}
+                )"
+            >
+                <strong>
+                    ${notif.title}
+                </strong>
+
+                <p>
+                    ${text}
+                </p>
+            </div>
+        `;
+    });
+}
+
+async function openNotification(
+    notificationId,
+    chatUserId
+) {
+
+    await markNotificationRead(
+        notificationId
+    );
+
+    if (chatUserId) {
+
+        openAdminChat(
+            chatUserId
+        );
+
+    } else {
+
+        loadChatUsers();
+    }
+
+    loadNotifications();
 }
 
 async function sendAdminMessage() {

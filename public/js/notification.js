@@ -1,4 +1,4 @@
-async function loadNotifications() {
+async function fetchNotifications() {
 
     const response =
         await fetch(
@@ -11,16 +11,44 @@ async function loadNotifications() {
             }
         );
 
-    const notifications =
-        await response.json();
+    if (!response.ok) {
+        return [];
+    }
 
-    notifications.forEach((notif) => {
+    return response.json();
+}
 
-        if (!notif.is_read) {
+async function markNotificationRead(notificationId) {
 
-            console.log(
-                notif.message
-            );
+    if (!notificationId) {
+        return;
+    }
+
+    await fetch(
+        `/api/notifications/${notificationId}/read`,
+        {
+            method: "PUT",
+            headers: {
+                Authorization:
+                    `Bearer ${token}`
+            }
         }
-    });
+    );
+}
+
+function getNotificationPayload(notification) {
+
+    if (!notification || !notification.message) {
+        return {
+            text: ""
+        };
+    }
+
+    try {
+        return JSON.parse(notification.message);
+    } catch {
+        return {
+            text: notification.message
+        };
+    }
 }

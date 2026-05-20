@@ -7,23 +7,21 @@ const router =
 const verifyToken =
     require("../middlewares/authMiddleware");
 
-const Notification =
-    require("../models/notificationModel");
+const {
+    getNotifications,
+    markNotificationRead
+} = require("../controllers/notificationController");
 
 router.get(
     "/",
     verifyToken,
-    (req, res) => {
+    getNotifications
+);
 
-        Notification.getNotifications(
-            req.user.id,
-
-            (err, result) => {
-
-                res.json(result);
-            }
-        );
-    }
+router.put(
+    "/:id/read",
+    verifyToken,
+    markNotificationRead
 );
 
 module.exports = router;

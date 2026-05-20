@@ -127,6 +127,7 @@ function logout() {
 
 loadDoctors();
 loadMyAppointments();
+loadNotifications();
 
 function openChat() {
 
@@ -223,6 +224,71 @@ async function loadMessages() {
 
     container.scrollTop =
         container.scrollHeight;
+}
+
+async function loadNotifications() {
+
+    const notifications =
+        await fetchNotifications();
+
+    const container =
+        document.getElementById(
+            "notifications"
+        );
+
+    container.innerHTML = "";
+
+    if (!notifications.length) {
+
+        container.innerHTML =
+            "<p>No notifications</p>";
+
+        return;
+    }
+
+    notifications.forEach((notif) => {
+
+        const payload =
+            getNotificationPayload(notif);
+
+        const text =
+            payload.text || notif.message;
+
+        const unreadStyle =
+            notif.is_read == 0
+                ? "font-weight:bold;"
+                : "";
+
+        container.innerHTML += `
+            <div
+                class="card"
+                style="cursor:pointer; ${unreadStyle}"
+                onclick="openNotification(
+                    ${notif.id}
+                )"
+            >
+                <strong>
+                    ${notif.title}
+                </strong>
+
+                <p>
+                    ${text}
+                </p>
+            </div>
+        `;
+    });
+}
+
+async function openNotification(
+    notificationId
+) {
+
+    await markNotificationRead(
+        notificationId
+    );
+
+    openChat();
+    loadNotifications();
 }
 
 async function sendMessage() {
