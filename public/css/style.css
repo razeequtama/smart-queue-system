@@ -24,3 +24,106 @@ button {
     padding: 15px;
     margin-top: 15px;
 }
+
+.chat-icon {
+
+    position: fixed;
+
+    bottom: 20px;
+    right: 20px;
+
+    width: 60px;
+    height: 60px;
+
+    border-radius: 50%;
+
+    background: #007bff;
+
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    font-size: 24px;
+}
+
+.chat-box {
+
+    position: fixed;
+
+    bottom: 90px;
+    right: 20px;
+
+    width: 350px;
+    height: 500px;
+
+    background: white;
+
+    border: 1px solid #ccc;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.hidden {
+    display: none;
+}
+
+#chatMessages {
+
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 10px;
+}
+
+.message {
+
+    padding: 10px;
+
+    margin-top: 10px;
+
+    border-radius: 10px;
+}
+
+.patient-message {
+
+    background: #d1e7dd;
+}
+
+.admin-message {
+
+    background: #f8d7da;
+}
+
+.chat-input {
+
+    display: flex;
+}
+
+.chat-badge {
+
+    position: absolute;
+
+    top: 5px;
+    right: 5px;
+
+    background: red;
+
+    color: white;
+
+    width: 20px;
+    height: 20px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 12px;
+}

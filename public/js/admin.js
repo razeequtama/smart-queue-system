@@ -120,3 +120,74 @@ function logout() {
 }
 
 loadQueues();
+loadChatUsers();
+
+async function loadChatUsers() {
+
+    const response = await fetch(
+        "/api/chat/admin/users",
+        {
+            headers: {
+                Authorization:
+                    `Bearer ${token}`
+            }
+        }
+    );
+
+    const users = await response.json();
+
+    const container =
+        document.getElementById(
+            "chatUsers"
+        );
+
+    container.innerHTML = "";
+
+    users.forEach((user) => {
+
+        let style = "";
+
+        // 🔥 INI BAGIAN BOLD-NYA
+        if (user.unread_count > 0) {
+
+            style =
+                "font-weight:bold";
+
+        }
+
+        container.innerHTML += `
+
+            <div
+                onclick="openAdminChat(
+                    ${user.id}
+                )"
+
+                style="
+                    ${style};
+                    cursor:pointer;
+                    margin-top:10px;
+                "
+            >
+
+                ${user.name}
+
+            </div>
+
+        `;
+    });
+}
+
+if (user.unread_count > 0) {
+
+    style = "font-weight:bold";
+
+} else {
+
+    style = "";
+}
+
+setInterval(() => {
+
+    loadChatUsers();
+
+}, 3000);

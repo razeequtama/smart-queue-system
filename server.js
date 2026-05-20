@@ -34,3 +34,11 @@ app.listen(PORT, async () => {
     );
 
 });
+
+const chatRoutes = require("./routes/chatRoutes");
+
+app.use("/api/chat", chatRoutes);
+
+const notificationRoutes = require("./routes/notificationRoutes");
+
+app.use("/api/notifications",notificationRoutes);

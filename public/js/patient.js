@@ -127,3 +127,203 @@ function logout() {
 
 loadDoctors();
 loadMyAppointments();
+
+function openChat() {
+
+    document
+        .getElementById("chatBox")
+        .classList.remove("hidden");
+
+    loadMessages();
+}
+
+function closeChat() {
+
+    document
+        .getElementById("chatBox")
+        .classList.add("hidden");
+}
+
+async function loadMessages() {
+
+    const response = await fetch(
+        "/api/chat/my",
+        {
+            headers: {
+                Authorization:
+                    `Bearer ${token}`
+            }
+        }
+    );
+
+    const messages =
+        await response.json();
+
+    const container =
+        document.getElementById(
+            "chatMessages"
+        );
+
+    container.innerHTML = "";
+
+    messages.forEach((msg) => {
+
+        let className = "";
+
+        if (
+            msg.sender_role ===
+            "patient"
+        ) {
+
+            className =
+                "patient-message";
+
+        } else {
+
+            className =
+                "admin-message";
+
+        }
+
+        container.innerHTML += `
+
+            <div
+                class="
+                    message
+                    ${className}
+                "
+            >
+
+                <strong>
+                    ${msg.sender_role}
+                </strong>
+
+                <p>
+                    ${msg.message}
+                </p>
+
+            </div>
+
+        `;
+    });
+
+    container.scrollTop =
+        container.scrollHeight;
+}
+
+async function sendMessage() {
+
+    const message =
+        document.getElementById(
+            "messageInput"
+        ).value;
+
+    if (!message) {
+
+        return;
+
+    }
+
+    await fetch(
+        "/api/chat/send",
+        {
+            method: "POST",
+
+            headers: {
+
+                "Content-Type":
+                    "application/json",
+
+                Authorization:
+                    `Bearer ${token}`
+            },
+
+            body: JSON.stringify({
+                message
+            })
+        }
+    );
+
+    document.getElementById(
+        "messageInput"
+    ).value = "";
+
+    loadMessages();
+}
+
+setInterval(() => {
+
+    loadNotifications();
+
+}, 3000);
+
+setInterval(() => {
+
+    const chatBox =
+        document.getElementById(
+            "chatBox"
+        );
+
+    if (
+        !chatBox.classList.contains(
+            "hidden"
+        )
+    ) {
+
+        loadMessages();
+
+    }
+
+}, 3000);
+
+async function checkUnreadMessages() {
+
+    const response = await fetch(
+        "/api/chat/my",
+        {
+            headers: {
+                Authorization:
+                    `Bearer ${token}`
+            }
+        }
+    );
+
+    const messages =
+        await response.json();
+
+    const unread =
+        messages.filter((msg) => {
+
+            return (
+                msg.sender_role ===
+                "admin"
+
+                &&
+
+                msg.is_read == 0
+            );
+
+        });
+
+    const badge =
+        document.getElementById(
+            "chatBadge"
+        );
+
+    if (unread.length > 0) {
+
+        badge.innerText =
+            unread.length;
+
+    } else {
+
+        badge.innerText = "";
+
+    }
+}
+
+setInterval(() => {
+
+    checkUnreadMessages();
+
+}, 3000);

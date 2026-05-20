@@ -109,6 +109,36 @@ const updateQueueStatus = (req, res) => {
             });
         }
     );
+
+    const Notification = require("../models/notificationModel");
+
+    if (status === "consulting") {
+
+        const getUserSql = `
+            SELECT user_id
+            FROM queues
+            WHERE id = ?
+        `;
+
+        db.query(
+            getUserSql,
+            [req.params.id],
+            (err, result) => {
+
+                const userId =
+                    result[0].user_id;
+
+                Notification.createNotification(
+                    [
+                        userId,
+                        "Queue Update",
+                        "Your queue is now consulting"
+                    ],
+                    () => {}
+                );
+            }
+        );
+    }
 };
 
 const deleteQueue = (req, res) => {

@@ -1,36 +1,79 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Patient Dashboard</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+    <head>
+        <title>Patient Dashboard</title>
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
 
-<div class="container">
+        <div class="container">
 
-    <h1>Patient Dashboard</h1>
+            <h1>Patient Dashboard</h1>
 
-    <button onclick="logout()">Logout</button>
+            <button onclick="logout()">Logout</button>
 
-    <h2>Create Appointment</h2>
+            <h2>Create Appointment</h2>
 
-    <select id="doctor"></select>
+            <select id="doctor"></select>
 
-    <input type="date" id="date">
+            <input type="date" id="date">
 
-    <input type="time" id="time">
+            <input type="time" id="time">
 
-    <button onclick="createAppointment()">
-        Create Appointment
-    </button>
+            <button onclick="createAppointment()">
+                Create Appointment
+            </button>
 
-    <h2>My Appointment History</h2>
+            <h2>My Appointment History</h2>
 
-    <div id="appointments"></div>
+            <div id="appointments"></div>
+            <div
+                class="chat-icon"
+                onclick="openChat()"
+            >
 
-</div>
+                💬
 
-<script src="js/patient.js"></script>
+                <span
+                    id="chatBadge"
+                    class="chat-badge"
+                >
+                </span>
 
-</body>
+            </div>
+
+            <div id="chatBox" class="chat-box hidden">
+
+                <div class="chat-header">
+
+                    <h3>Hospital Support</h3>
+
+                    <button onclick="closeChat()">
+                        X
+                    </button>
+
+                </div>
+
+                <div id="chatMessages"></div>
+
+                <div class="chat-input">
+
+                    <input
+                        type="text"
+                        id="messageInput"
+                        placeholder="Type message..."
+                    >
+
+                    <button onclick="sendMessage()">
+                        Send
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+
+        <script src="js/patient.js"></script>
+
+    </body>
 </html>
