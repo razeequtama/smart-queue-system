@@ -1,4 +1,6 @@
 let currentChatUserId = null;
+let currentChatUserName = "";
+let chatUsersList = [];
 
 const token =
     localStorage.getItem("token");
@@ -138,6 +140,7 @@ async function loadChatUsers() {
     );
 
     const users = await response.json();
+    chatUsersList = users;
 
     const container =
         document.getElementById(
@@ -178,10 +181,27 @@ async function loadChatUsers() {
 
         `;
     });
+
+    const unreadTotal = users.reduce(
+        (sum, user) => sum + (user.unread_count || 0),
+        0
+    );
+
+    const badge = document.getElementById(
+        "chatBadge"
+    );
+
+    if (badge) {
+        badge.innerText =
+            unreadTotal > 0
+                ? unreadTotal
+                : "";
+    }
 }
 
 setInterval(() => {
 
+    loadQueues();
     loadChatUsers();
     loadNotifications();
 
@@ -192,6 +212,23 @@ async function openAdminChat(
 ) {
 
     currentChatUserId = userId;
+
+    const user = chatUsersList.find(
+        (item) => item.id === userId
+    );
+
+    currentChatUserName =
+        user?.name || "User Chat";
+
+    const chatNameElement =
+        document.getElementById(
+            "chatUserName"
+        );
+
+    if (chatNameElement) {
+        chatNameElement.textContent =
+            currentChatUserName;
+    }
 
     document
         .getElementById(
@@ -225,6 +262,17 @@ function closeAdminChat() {
         .classList.add("hidden");
 }
 
+function openChatIcon() {
+    if (currentChatUserId) {
+        openAdminChat(currentChatUserId);
+        return;
+    }
+
+    if (chatUsersList.length > 0) {
+        openAdminChat(chatUsersList[0].id);
+    }
+}
+
 async function loadAdminMessages(
     userId
 ) {
@@ -250,48 +298,28 @@ async function loadAdminMessages(
     container.innerHTML = "";
 
     messages.forEach((msg) => {
-
         let className = "";
+        let senderLabel = "";
 
-        if (
-            msg.sender_role ===
-            "patient"
-        ) {
-
-            className =
-                "patient-message";
-
+        if (msg.sender_role === "patient") {
+            className = "patient-message";
+            senderLabel = msg.sender_name ? `Patient - ${msg.sender_name}` : "Patient";
         } else {
-
-            className =
-                "admin-message";
-
+            className = "admin-message";
+            senderLabel = msg.sender_name ? `Admin - ${msg.sender_name}` : "Admin";
         }
 
         container.innerHTML += `
-
-            <div
-                class="
-                    message
-                    ${className}
-                "
-            >
-
-                <strong>
-                    ${msg.sender_role}
-                </strong>
-
-                <p>
-                    ${msg.message}
-                </p>
-
+            <div class="message ${className}">
+                <strong>${senderLabel}</strong>
+                <p>${msg.message}</p>
             </div>
-
         `;
     });
 
-    container.scrollTop =
-        container.scrollHeight;
+    container.scrollTop = container.scrollHeight;
+    container.style.overflowY = "scroll"; // Ensure scrollability
+    container.style.maxHeight = "400px"; // Set a max height for the chat box
 }
 
 async function loadNotifications() {
@@ -322,6 +350,11 @@ async function loadNotifications() {
         const text =
             payload.text || notif.message;
 
+        const title =
+            payload.senderName
+                ? `New message from ${payload.senderName}`
+                : notif.title;
+
         const chatUserId =
             payload.chatUserId || 0;
 
@@ -340,7 +373,7 @@ async function loadNotifications() {
                 )"
             >
                 <strong>
-                    ${notif.title}
+                    ${title}
                 </strong>
 
                 <p>

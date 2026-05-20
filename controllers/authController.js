@@ -33,9 +33,11 @@ const register = async (
 
     }
 
+    const normalizedRole = String(role || "").trim().toLowerCase();
+
     if (
-        role !== "admin" &&
-        role !== "patient"
+        normalizedRole !== "admin" &&
+        normalizedRole !== "patient"
     ) {
 
         return res.status(400).json({
@@ -69,7 +71,7 @@ const register = async (
                     email,
                     phone_number,
                     hashedPassword,
-                    role
+                    normalizedRole
                 ],
 
                 (err) => {
@@ -135,10 +137,13 @@ const login = (
 
             }
 
+            const userRole = String(user.role || "").trim().toLowerCase();
+
             const token = jwt.sign(
                 {
                     id: user.id,
-                    role: user.role
+                    role: userRole,
+                    name: user.name
                 },
 
                 process.env.JWT_SECRET,
@@ -150,7 +155,7 @@ const login = (
 
             res.json({
                 token,
-                role: user.role,
+                role: userRole,
                 name: user.name
             });
         }

@@ -2,7 +2,10 @@ const checkRole = (role) => {
 
     return (req, res, next) => {
 
-        if (req.user.role !== role) {
+        const userRole = String(req.user.role || "").trim().toLowerCase();
+        const requiredRole = String(role || "").trim().toLowerCase();
+
+        if (userRole !== requiredRole) {
 
             return res.status(403).json({
                 message: "Forbidden access"

@@ -17,7 +17,7 @@ const sendMessage = (req, res) => {
         [
             targetUserId,
             req.user.role,
-            req.user.role,
+            req.user.name || req.user.role,
             message
         ],
         (err) => {
@@ -62,13 +62,14 @@ const createChatNotification = (
 
         const payload = JSON.stringify({
             chatUserId: targetUserId,
-            text: message
+            text: message,
+            senderName: req.user.name || "Admin"
         });
 
         Notification.createNotification(
             [
                 targetUserId,
-                "New message from admin",
+                `New message from admin ${req.user.name || "Admin"}`,
                 payload
             ],
             callback
@@ -95,7 +96,8 @@ const createChatNotification = (
 
         const payload = JSON.stringify({
             chatUserId: req.user.id,
-            text: message
+            text: message,
+            senderName: req.user.name || "Patient"
         });
 
         let completed = 0;
