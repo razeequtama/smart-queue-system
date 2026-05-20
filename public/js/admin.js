@@ -1,3 +1,5 @@
+let currentChatUserId = null;
+
 const token =
     localStorage.getItem("token");
 
@@ -191,3 +193,153 @@ setInterval(() => {
     loadChatUsers();
 
 }, 3000);
+
+async function openAdminChat(
+    userId
+) {
+
+    currentChatUserId = userId;
+
+    document
+        .getElementById(
+            "adminChatBox"
+        )
+        .classList.remove("hidden");
+
+    await fetch(
+        `/api/chat/read/admin/${userId}`,
+        {
+            method: "PUT",
+
+            headers: {
+                Authorization:
+                    `Bearer ${token}`
+            }
+        }
+    );
+
+    loadAdminMessages(userId);
+
+    loadChatUsers();
+}
+
+function closeAdminChat() {
+
+    document
+        .getElementById(
+            "adminChatBox"
+        )
+        .classList.add("hidden");
+}
+
+async function loadAdminMessages(
+    userId
+) {
+
+    const response = await fetch(
+        `/api/chat/admin/${userId}`,
+        {
+            headers: {
+                Authorization:
+                    `Bearer ${token}`
+            }
+        }
+    );
+
+    const messages =
+        await response.json();
+
+    const container =
+        document.getElementById(
+            "adminChatMessages"
+        );
+
+    container.innerHTML = "";
+
+    messages.forEach((msg) => {
+
+        let className = "";
+
+        if (
+            msg.sender_role ===
+            "patient"
+        ) {
+
+            className =
+                "patient-message";
+
+        } else {
+
+            className =
+                "admin-message";
+
+        }
+
+        container.innerHTML += `
+
+            <div
+                class="
+                    message
+                    ${className}
+                "
+            >
+
+                <strong>
+                    ${msg.sender_role}
+                </strong>
+
+                <p>
+                    ${msg.message}
+                </p>
+
+            </div>
+
+        `;
+    });
+
+    container.scrollTop =
+        container.scrollHeight;
+}
+
+async function sendAdminMessage() {
+
+    const message =
+        document.getElementById(
+            "adminMessageInput"
+        ).value;
+
+    if (!message) {
+
+        return;
+    }
+
+    await fetch(
+        "/api/chat/send",
+        {
+            method: "POST",
+
+            headers: {
+
+                "Content-Type":
+                    "application/json",
+
+                Authorization:
+                    `Bearer ${token}`
+            },
+
+            body: JSON.stringify({
+                message,
+                user_id:
+                    currentChatUserId
+            })
+        }
+    );
+
+    document.getElementById(
+        "adminMessageInput"
+    ).value = "";
+
+    loadAdminMessages(
+        currentChatUserId
+    );
+}

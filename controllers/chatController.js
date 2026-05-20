@@ -6,11 +6,22 @@ const sendMessage = (
     res
 ) => {
 
-    const { message } = req.body;
+    const { message, user_id } =
+        req.body;
+
+    let targetUserId =
+        req.user.id;
+
+    if (
+        req.user.role === "admin"
+    ) {
+
+        targetUserId = user_id;
+    }
 
     Chat.sendMessage(
         [
-            req.user.id,
+            targetUserId,
             req.user.role,
             req.user.role,
             message
@@ -81,9 +92,48 @@ const getChatUsers = (
     );
 };
 
+const markPatientRead = (
+    req,
+    res
+) => {
+
+    Chat.markAdminMessagesAsRead(
+        req.user.id,
+
+        (err) => {
+
+            res.json({
+                message:
+                    "Messages read"
+            });
+        }
+    );
+};
+
+const markAdminRead = (
+    req,
+    res
+) => {
+
+    Chat.markPatientMessagesAsRead(
+        req.params.userId,
+
+        (err) => {
+
+            res.json({
+                message:
+                    "Messages read"
+            });
+        }
+    );
+};
+
 module.exports = {
     sendMessage,
     getMyMessages,
     getAdminMessages,
-    getChatUsers
+    getChatUsers,
+
+    markPatientRead,
+    markAdminRead
 };

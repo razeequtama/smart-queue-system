@@ -18,6 +18,41 @@
 
     <div id="chatUsers"></div>
 
+    <div
+        id="adminChatBox"
+        class="chat-box hidden"
+    >
+
+        <div class="chat-header">
+
+            <h3 id="chatUserName">
+                User Chat
+            </h3>
+
+            <button onclick="closeAdminChat()">
+                X
+            </button>
+
+        </div>
+
+        <div id="adminChatMessages"></div>
+
+        <div class="chat-input">
+
+            <input
+                type="text"
+                id="adminMessageInput"
+                placeholder="Type message..."
+            >
+
+            <button onclick="sendAdminMessage()">
+                Send
+            </button>
+
+        </div>
+
+    </div>
+
 </div>
 
 <script src="js/admin.js"></script>

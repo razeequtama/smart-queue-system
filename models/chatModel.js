@@ -82,9 +82,56 @@ const markAsRead = (
     db.query(sql, [userId], callback);
 };
 
+const markAdminMessagesAsRead = (
+    userId,
+    callback
+) => {
+
+    const sql = `
+        UPDATE chats
+
+        SET is_read = 1
+
+        WHERE user_id = ?
+
+        AND sender_role = 'admin'
+    `;
+
+    db.query(
+        sql,
+        [userId],
+        callback
+    );
+};
+
+const markPatientMessagesAsRead = (
+    userId,
+    callback
+) => {
+
+    const sql = `
+        UPDATE chats
+
+        SET is_read = 1
+
+        WHERE user_id = ?
+
+        AND sender_role = 'patient'
+    `;
+
+    db.query(
+        sql,
+        [userId],
+        callback
+    );
+};
+
 module.exports = {
     sendMessage,
     getMessages,
     getUserChatList,
-    markAsRead
+    markAsRead,
+
+    markAdminMessagesAsRead,
+    markPatientMessagesAsRead
 };

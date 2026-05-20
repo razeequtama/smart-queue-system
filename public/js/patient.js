@@ -134,7 +134,21 @@ function openChat() {
         .getElementById("chatBox")
         .classList.remove("hidden");
 
+    fetch(
+        "/api/chat/read/patient",
+        {
+            method: "PUT",
+
+            headers: {
+                Authorization:
+                    `Bearer ${token}`
+            }
+        }
+    );
+
     loadMessages();
+
+    checkUnreadMessages();
 }
 
 function closeChat() {

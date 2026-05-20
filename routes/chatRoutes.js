@@ -14,7 +14,11 @@ const {
     sendMessage,
     getMyMessages,
     getAdminMessages,
-    getChatUsers
+    getChatUsers,
+
+    markPatientRead,
+    markAdminRead
+
 } = require("../controllers/chatController");
 
 router.post(
@@ -42,6 +46,20 @@ router.get(
     verifyToken,
     checkRole("admin"),
     getAdminMessages
+);
+
+router.put(
+    "/read/patient",
+    verifyToken,
+    checkRole("patient"),
+    markPatientRead
+);
+
+router.put(
+    "/read/admin/:userId",
+    verifyToken,
+    checkRole("admin"),
+    markAdminRead
 );
 
 module.exports = router;
