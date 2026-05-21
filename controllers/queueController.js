@@ -144,7 +144,8 @@ const updateQueueStatus = (req, res) => {
 const deleteQueue = (req, res) => {
 
     const sql = `
-        DELETE FROM queues
+        UPDATE queues
+        SET status = 'deleted'
         WHERE id = ?
     `;
 
@@ -162,7 +163,7 @@ const deleteQueue = (req, res) => {
             }
 
             res.json({
-                message: "Queue deleted"
+                message: "Queue marked as deleted"
             });
         }
     );

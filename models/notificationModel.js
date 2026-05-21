@@ -30,7 +30,15 @@ const getNotifications = (
         ORDER BY created_at DESC
     `;
 
-    db.query(sql, [userId], callback);
+    db.query(sql, [userId], (err, result) => {
+        if (err) {
+            console.error("Database error fetching notifications:", err); // Debugging log
+        } else {
+            console.log("Database notifications result:", result); // Debugging log
+        }
+
+        callback(err, result);
+    });
 };
 
 const markAsRead = (

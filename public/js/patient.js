@@ -83,7 +83,9 @@ async function loadMyAppointments() {
     const appointments =
         await response.json();
 
-    myAppointments = appointments;
+    myAppointments = appointments.filter(
+        (item) => item.status !== "deleted"
+    );
 
     const container =
         document.getElementById(
@@ -92,7 +94,7 @@ async function loadMyAppointments() {
 
     container.innerHTML = "";
 
-    appointments.forEach((item) => {
+    myAppointments.forEach((item) => {
 
         container.innerHTML += `
             <div class="card">

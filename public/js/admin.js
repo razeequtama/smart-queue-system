@@ -25,7 +25,7 @@ async function loadQueues() {
 
     container.innerHTML = "";
 
-    queues.forEach((queue) => {
+    queues.filter(queue => queue.status !== 'deleted').forEach((queue) => {
 
         container.innerHTML += `
             <div class="card">

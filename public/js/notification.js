@@ -1,21 +1,21 @@
 async function fetchNotifications() {
-
-    const response =
-        await fetch(
-            "/api/notifications",
-            {
-                headers: {
-                    Authorization:
-                        `Bearer ${token}`
-                }
-            }
-        );
+    const response = await fetch("/api/notifications", {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+    });
 
     if (!response.ok) {
+        console.error("Failed to fetch notifications", await response.text()); // Debugging log
         return [];
     }
 
-    return response.json();
+    const notifications = await response.json();
+
+    // Debugging log to verify fetched notifications
+    console.log("Fetched notifications:", notifications);
+
+    return notifications;
 }
 
 async function markNotificationRead(notificationId) {
